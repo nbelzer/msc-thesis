@@ -1,0 +1,12 @@
+{
+    "nodes": {
+        "cdn1" : [ "cdn2", "cdn3", "cdn6"],
+        "cdn2" : [ "cdn1", "cdn4", "cdn5" ],
+        "cdn3" : [ "cdn1", "cdn7", "cdn8" ],
+        "cdn4" : [ "cdn2" ],
+        "cdn5" : [ "cdn2" ],
+        "cdn6" : [ "cdn1", "cdn7" ],
+        "cdn7" : [ "cdn3", "cdn6" ],
+        "cdn8" : [ "cdn3" ]
+    }
+}

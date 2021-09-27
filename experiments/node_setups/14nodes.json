@@ -1,0 +1,18 @@
+{
+    "nodes": {
+        "cdn1" : [ "cdn2", "cdn3", "cdn6", "cdn11" ],
+        "cdn2" : [ "cdn1", "cdn4", "cdn5" ],
+        "cdn3" : [ "cdn1", "cdn7", "cdn8", "cdn14" ],
+        "cdn4" : [ "cdn2", "cdn10" ],
+        "cdn5" : [ "cdn2", "cdn9", "cdn11" ],
+        "cdn6" : [ "cdn1", "cdn7", "cdn10", "cdn13" ],
+        "cdn7" : [ "cdn3", "cdn6", "cdn13" ],
+        "cdn8" : [ "cdn3", "cdn12" ],
+        "cdn9" : [ "cdn5", "cdn12" ],
+        "cdn10" : [ "cdn4", "cdn6" ],
+        "cdn11" : [ "cdn1", "cdn5" ],
+        "cdn12" : [ "cdn8", "cdn9" ],
+        "cdn13" : [ "cdn6", "cdn7", "cdn14" ],
+        "cdn14" : [ "cdn3", "cdn13" ]
+    }
+}

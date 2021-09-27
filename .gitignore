@@ -1,0 +1,5 @@
+# Ignore any experiment results or script outputs.
+out/
+
+# Ignore trace files generated.
+*.trace.gz
