@@ -1,9 +1,7 @@
 # Caching for mobile users in edge networks
 _Masters Thesis at [Delft University of Technology](https://www.tudelft.nl)_.
 
-```
-Reference to the thesis work will be added upon publication.
-```
+See [repository.tudelft.nl](http://resolver.tudelft.nl/uuid:c27c8d2e-6ba4-406b-b8d3-4fbcd49c480d) for the associated work.
 
 This repository contains the source code and other supplemental material to my Masters Thesis.  While I included some documentation throughout the repo Thesis document itself contains most of the rational and explanations.
 
