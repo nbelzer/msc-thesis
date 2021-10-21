@@ -103,6 +103,7 @@ class UserSimulation:
 
         actions = [ f"CON {i} {loc.identifier}"
                           for i, loc in enumerate(starting_locations) ]
+        del starting_locations
 
         print(f"Simulating {self.config.no_iterations} iterations for {self.config.no_users} users.")
         for i in tqdm(range(self.config.no_iterations)):
