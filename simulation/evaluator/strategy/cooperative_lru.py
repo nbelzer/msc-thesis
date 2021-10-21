@@ -6,14 +6,14 @@ class CooperativeLRUStrategy(CacheStrategy):
     node_trail_length: int
     outsource_resources: bool
 
-    def __init__(self, nodes: dict[str, dict[str, any]], node_trail_length: int, outsource_resources: bool = False):
-        super().__init__({ name: self.build_node(settings)
-                           for name, settings in nodes.items() })
+    def __init__(self, nodes: dict[str, int], node_trail_length: int, outsource_resources: bool = False):
+        super().__init__({ name: self.build_node(capacity)
+                           for name, capacity in nodes.items() })
         self.node_trail_length = node_trail_length
         self.outsource_resources = outsource_resources
 
-    def build_node(self, from_settings: dict[str, any]) -> CooperativeLRUCache:
-        return CooperativeLRUCache(capacity=int(from_settings["capacity"]))
+    def build_node(self, capacity) -> CooperativeLRUCache:
+        return CooperativeLRUCache(capacity=capacity)
 
     def handle_request(self, for_user: str, for_node: str, content: CacheItem, at_timestamp: int):
         node = self.nodes[for_node]

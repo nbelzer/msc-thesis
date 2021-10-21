@@ -1,4 +1,4 @@
-from simulation.evaluator.instruction_parser import TraceIterator, InstructionParser, Instruction
+from simulation.evaluator.instruction_parser import StreamingTraceIterator, TraceIterator, InstructionParser, Instruction
 import simulation.evaluator.instructions as ins
 from simulation.generator.main_zipf import EdgeNode
 from simulation.evaluator.statistics.file_writer import StatsFileWriter
@@ -13,10 +13,17 @@ from typing import Tuple
 import json
 from experiments.stats_reader import load_file
 
-class TraceIteratorProxy(TraceIterator):
-    """A simple object that allows a trace for N amount of nodes to be used with a setup of N or less nodes by mapping the requests."""
-    def __init__(self, instructions: list[Instruction], proxy_map: dict[str, str]):
-        super().__init__([ TraceIteratorProxy.remap_node(i, proxy_map) for i in copy.deepcopy(instructions) ])
+class TraceIteratorProxy(StreamingTraceIterator):
+    """A simple object that allows a trace for N amount of nodes to be
+    used with a setup of N or less nodes by mapping the requests."""
+    proxy_map: dict[str, str]
+
+    def __init__(self, file_path: str, proxy_map: dict[str, str]):
+        self.proxy_map = proxy_map
+        super().__init__(file_path)
+
+    def __next__(self):
+        return self.remap_node(super().__next__(), self.proxy_map)
 
     @staticmethod
     def remap_node(instruction: Instruction, proxy_map: dict[str, str]):
@@ -29,7 +36,8 @@ class TraceIteratorProxy(TraceIterator):
         return instruction
 
 class MultiRunData:
-    """A helper object that allows easy creation of a mean-variance dataset by combining multiple datapoints."""
+    """A helper object that allows easy creation of a mean-variance
+    dataset by combining multiple datapoints."""
     datapoints: list[list[float]]
 
     def __init__(self):
@@ -46,30 +54,19 @@ def make_dir(dir) -> str:
         os.makedirs(dir)
     return dir
 
-def __parse_actions(actions: list[str]) -> TraceIterator:
-    return TraceIterator(InstructionParser.parse_all(actions))
-
-def generate_trace(simulation) -> TraceIterator:
-    """Generates a trace with the given parameters."""
-    return __parse_actions(simulation.simulate())
-
-def generate_trace_if_not_exists(identifier: str, simulation) -> list[str]:
+def generate_trace_if_not_exists(identifier: str, simulation):
     """Generates a trace if it doesn't exist yet."""
     if not os.path.exists(identifier):
-        actions = simulation.simulate()
         with gzip.open(identifier, 'wb') as f:
             f.write(str.encode(""))
-            for action in actions:
+            for action in simulation.simulate():
                 f.write(str.encode(f"{action}\n"))
-        return actions
-    return None
 
 def load_or_generate_trace(identifier: str, simulation) -> TraceIterator:
-    """Loads the trace for the given `identifier`, if the trace does not exist it is generated according to the `simulation`."""
-    actions = generate_trace_if_not_exists(identifier, simulation)
-    if actions != None:
-        return __parse_actions(actions)
-    return TraceIterator.from_file(identifier)
+    """Loads the trace for the given `identifier`, if the trace does not
+    exist it is generated according to the `simulation`."""
+    generate_trace_if_not_exists(identifier, simulation)
+    return StreamingTraceIterator(identifier)
 
 def clean_identifier(identifier: str) -> str:
     """Removes all whitespaces from the identifier."""
@@ -97,7 +94,7 @@ def setup_node_map(no_nodes: int) -> dict[str, EdgeNode]:
              for node in nodes }
 
 def setup_nodes(no_nodes: int, node_capacity: int):
-    return {f"cdn{i + 1}": { "capacity": node_capacity } for i, _ in enumerate(range(no_nodes))}
+    return {f"cdn{i + 1}": node_capacity for i, _ in enumerate(range(no_nodes))}
 
 def setup_stats_file_writers(nodes: dict[str, int], out_dir: str, marker: str = ""):
     timestamp = int(time.time())

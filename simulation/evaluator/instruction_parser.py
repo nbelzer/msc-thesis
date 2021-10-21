@@ -32,6 +32,27 @@ class TraceIterator(Iterator):
         return TraceIterator(InstructionParser.parse_file(file_path))
 
 
+class StreamingTraceIterator(Iterator):
+    """Iterator that does not require the entire trace to be pre-loaded."""
+    file_path: str
+
+    def __init__(self, file_path: str):
+        self.file_path = file_path
+        self.reset()
+
+    def __next__(self) -> Instruction:
+        return self.iterator.__next__()
+
+    def reset(self):
+        self.iterator = self.__build_iterator()
+
+    def __build_iterator(self):
+        with gzip.open(self.file_path, 'r') as f:
+            for line in f:
+                instruction = InstructionParser.parse(line.decode())
+                yield instruction
+
+
 class InstructionParser:
     """Generic class module that covers different instruction parsing
     methods.
@@ -54,3 +75,10 @@ class InstructionParser:
         with gzip.open(file_path, 'rb') as f:
             instructions = InstructionParser.parse_all([ l.decode() for l in f.readlines() ])
         return instructions
+
+    @staticmethod
+    def streaming_intructions(file_path):
+        """Streams a set of instructions line by line."""
+        with gzip.open(file_path, 'r') as f:
+            for line in f:
+                yield InstructionParser.parse(line.decode())

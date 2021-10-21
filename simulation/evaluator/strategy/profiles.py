@@ -9,15 +9,15 @@ class ProfilesStrategy(CacheStrategy):
     iteration: int = 0
     ranking_timeout: int = 5
 
-    def __init__(self, nodes: dict[str, dict[str, any]], ranking_timeout: int = 5, profile_size: int = 1000):
-        super().__init__({ name: self.build_node(settings)
-                           for name, settings in nodes.items() })
+    def __init__(self, nodes: dict[str, int], ranking_timeout: int = 5, profile_size: int = 1000):
+        super().__init__({ name: self.build_node(capacity)
+                           for name, capacity in nodes.items() })
         self.profiles = defaultdict(lambda: UserProfile(max_size=profile_size))
         self.iteration = 0
         self.ranking_timeout = ranking_timeout
 
-    def build_node(self, from_settings: dict[str, any]) -> ProfileLRUCache:
-        return ProfileLRUCache(capacity=int(from_settings["capacity"]))
+    def build_node(self, capacity: int) -> ProfileLRUCache:
+        return ProfileLRUCache(capacity=capacity)
 
     def handle_iteration(self, iteration: int):
         self.iteration = iteration

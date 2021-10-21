@@ -3,12 +3,12 @@ from simulation.evaluator.cache.lru_cache_linked import LRUCache
 from simulation.evaluator.strategy.strategy import CacheStrategy
 
 class LRUStrategy(CacheStrategy):
-    def __init__(self, nodes: dict[str, dict[str, any]]):
-        super().__init__({ name: self.build_node(settings)
-                       for name, settings in nodes.items() })
+    def __init__(self, nodes: dict[str, int]):
+        super().__init__({ name: self.build_node(capacity)
+                       for name, capacity in nodes.items() })
 
-    def build_node(self, from_settings: dict[str, any]) -> LRUCache:
-        return LRUCache(capacity=int(from_settings["capacity"]))
+    def build_node(self, node_capacity: int) -> LRUCache:
+        return LRUCache(capacity=node_capacity)
 
     def handle_request(self, for_user: str, for_node: str, content: CacheItem, at_timestamp: int):
         node = self.nodes[for_node]
