@@ -1,4 +1,4 @@
-from .lru_cache import LRUCache
+from .lru_cache_linked import LRUCache
 
 class CooperativeLRUCache(LRUCache):
     content_neighbour: dict[str, str]
